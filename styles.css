@@ -1,0 +1,1346 @@
+/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body and background */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #1a1c2c 0%, #2c3e50 100%);
+    color: #333;
+    min-height: 100vh;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.2) 2%, transparent 0%),
+        radial-gradient(circle at 75px 75px, rgba(255, 255, 255, 0.2) 2%, transparent 0%);
+    background-size: 100px 100px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Game container */
+.game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 160px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Header styles */
+.header-container {
+    background: rgba(44, 62, 80, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.game-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.game-title i {
+    font-size: 24px;
+    color: #3498db;
+}
+
+.game-title h1 {
+    font-size: 24px;
+    color: #fff;
+    margin: 0;
+}
+
+.stats-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.primary-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.stat-chip {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stat-chip i {
+    font-size: 20px;
+}
+
+.stat-info {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Employee sections */
+.employee-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    padding: 15px;
+}
+
+.role-section {
+    position: relative;
+    padding-top: 20px;
+    margin-top: 40px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+    display: none;
+}
+
+.role-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+    display: block;
+}
+
+.role-section:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+/* Employee cards */
+.tech-row {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    transition: transform 0.2s;
+}
+
+.tech-row:hover {
+    transform: translateY(-2px);
+}
+
+/* Progress bar */
+.progress-bar {
+    height: 35px;
+    background: linear-gradient(135deg, #f1f3f5 0%, #e9ecef 100%);
+    border-radius: 17.5px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    width: 0%;
+    border-radius: 17.5px;
+    transition: width 0.1s linear;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.progress-text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2c3e50;
+    font-weight: 500;
+    z-index: 2;
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+    pointer-events: none;
+}
+
+/* Bottom navigation */
+.bottom-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(44, 62, 80, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+}
+
+.bottom-nav {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    padding: 10px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.nav-button {
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.nav-button.active {
+    background: #3498db;
+    color: #fff;
+}
+
+.click-action {
+    padding: 15px;
+    text-align: center;
+}
+
+.action-button {
+    background: #2ecc71;
+    border: none;
+    border-radius: 10px;
+    padding: 15px 30px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.action-button:hover {
+    transform: translateY(-2px);
+    background: #27ae60;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.stat-chip:hover {
+    animation: pulse 1s infinite;
+}
+
+/* Notification styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(44, 62, 80, 0.95);
+    border-radius: 10px;
+    padding: 15px 20px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s ease;
+    display: none;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.notification i {
+    color: #3498db;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+.notification-close:hover {
+    color: white;
+}
+
+/* Employee card styles */
+.employee-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hire-button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s;
+}
+
+.hire-button:not(:disabled):hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+}
+
+.hire-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.hire-button .title {
+    font-size: 1.2em;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.hire-button .cost {
+    color: #e74c3c;
+}
+
+.hire-button .reward {
+    color: #27ae60;
+}
+
+.hire-button .requirement {
+    color: #7f8c8d;
+    font-size: 0.9em;
+}
+
+.employee-active {
+    padding: 15px;
+}
+
+.employee-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.employee-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.employee-details .name {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.employee-details .rate {
+    font-size: 0.9em;
+    color: #7f8c8d;
+}
+
+/* Manager styles */
+.manager-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.manager-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+    display: none;
+}
+
+.manager-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+    display: block;
+}
+
+.manager-button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    background: white;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.manager-button:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.manager-button.owned {
+    background: #f1f8ff;
+    border: 1px solid #3498db;
+}
+
+/* Settings styles */
+.settings-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Role divider styles */
+.role-divider {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 30px 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.role-divider.visible {
+    opacity: 1;
+}
+
+.role-divider .divider-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #3498db, transparent);
+}
+
+.role-divider .divider-text {
+    color: #3498db;
+    font-size: 1.2em;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* Upgrade styles */
+.upgrade-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.upgrade-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.upgrade-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.upgrade-button {
+    width: 100%;
+    padding: 20px;
+    border: none;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.upgrade-button:not(:disabled):hover {
+    background: #f8f9fa;
+}
+
+.upgrade-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.upgrade-button i {
+    font-size: 1.5em;
+    color: #3498db;
+    margin-bottom: 5px;
+}
+
+.upgrade-button .title {
+    font-size: 1.2em;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.upgrade-button .cost {
+    color: #e74c3c;
+}
+
+.upgrade-button .effect {
+    color: #27ae60;
+}
+
+.upgrade-button .level {
+    color: #7f8c8d;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+/* Add a subtle glow effect for affordable upgrades */
+.upgrade-button:not(:disabled)::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.upgrade-button:not(:disabled):hover::after {
+    opacity: 1;
+}
+
+/* Event Banner Styling */
+.event-banner {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    max-width: 300px;
+    transform: translateX(120%);
+    transition: transform 0.3s ease-out;
+}
+
+.event-banner.active {
+    transform: translateX(0);
+}
+
+.event-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+}
+
+.event-content i {
+    font-size: 24px;
+    color: #ffd700;
+}
+
+.event-timer {
+    margin-top: 8px;
+    font-size: 0.9em;
+    color: #ecf0f1;
+}
+
+/* Task Complete Effect */
+.task-complete-effect {
+    position: absolute;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.data-particle {
+    position: absolute;
+    color: #2ecc71;
+    font-weight: bold;
+    opacity: 0;
+    animation: floatUp 1s ease-out;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+}
+
+/* Achievement Panel Styling */
+.achievements-container {
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Achievement Summary */
+.achievement-summary {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.summary-stat {
+    margin-bottom: 15px;
+}
+
+.summary-stat h3 {
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.stat-value {
+    font-size: 24px;
+    color: #3498db;
+    font-weight: bold;
+}
+
+.completion-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.completion-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.completion-text {
+    position: absolute;
+    top: -20px;
+    right: 0;
+    font-size: 14px;
+    color: #fff;
+}
+
+/* Achievement Categories */
+.achievements-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.achievement-category {
+    background: rgba(44, 62, 80, 0.95);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.achievement-list {
+    display: grid;
+    gap: 12px;
+    padding: 5px;
+}
+
+/* Make production achievements match workforce style */
+#productionAchievements .achievement-list {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 5px;
+}
+
+/* Consistent achievement card styling */
+.achievement-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.achievement-card .achievement-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.achievement-card .achievement-icon i {
+    font-size: 18px;
+    color: #f1c40f;
+}
+
+/* Category headers */
+.category-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(52, 152, 219, 0.3);
+}
+
+.category-header i {
+    font-size: 24px;
+    color: #3498db;
+}
+
+.category-progress {
+    background: rgba(52, 152, 219, 0.1);
+    padding: 4px 8px;
+    border-radius: 12px;
+    color: #3498db;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Subcategories */
+.subcategories-grid {
+    display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.achievement-subcategory {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.achievement-subcategory h4 {
+    color: #3498db;
+    font-size: 16px;
+    margin: 0 0 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Achievement Cards */
+.achievement-list {
+    display: grid;
+    gap: 10px;
+}
+
+.achievement-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.achievement-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.achievement-icon i {
+    font-size: 18px;
+    color: #f1c40f;
+}
+
+.achievement-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow: hidden;
+}
+
+.achievement-info h4 {
+    color: #fff;
+    font-size: 16px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.achievement-info p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.achievement-progress {
+    margin-top: 8px;
+}
+
+.achievement-progress .progress-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.achievement-progress .progress-text {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 4px;
+    text-align: right;
+}
+
+.achievement-reward {
+    color: #2ecc71;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Progress indicator for nearly completed achievements */
+.achievement-card.near-complete {
+    opacity: 0.8;
+    filter: grayscale(0.5);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+/* Panel system */
+.panels-container {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 300px);
+    background: rgba(44, 62, 80, 0.95);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    overflow-y: auto;
+}
+
+.panel.active {
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+}
+
+/* Ensure panels don't overlap */
+#employeesPanel, #upgradesPanel, #managersPanel, #achievementsPanel, #settingsPanel {
+    display: none;
+}
+
+#employeesPanel.active, #upgradesPanel.active, #managersPanel.active, 
+#achievementsPanel.active, #settingsPanel.active {
+    display: block;
+}
+
+/* Adjust main content area to account for fixed bottom nav */
+main {
+    padding-bottom: 120px;
+}
+
+/* Achievement card progress bar styling */
+.achievement-card .progress-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: none;
+    cursor: default;
+}
+
+.achievement-card .progress-fill {
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    height: 100%;
+    border-radius: 2px;
+    box-shadow: none;
+}
+
+.achievement-card .progress-text {
+    position: static;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    margin-top: 4px;
+    text-align: right;
+    text-shadow: none;
+}
+
+/* Achievement card layout */
+.achievement-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.achievement-card.locked {
+    filter: grayscale(1);
+    opacity: 0.5;
+}
+
+.achievement-card:not(.locked):hover {
+    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Achievement notification */
+.achievement-notification {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(52, 152, 219, 0.3);
+    animation: slideIn 0.5s ease-out;
+    max-width: 350px;
+}
+
+.achievement-notification .achievement-icon {
+    background: rgba(255, 255, 255, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.achievement-notification .achievement-icon i {
+    font-size: 20px;
+    color: #f1c40f;
+    animation: iconPop 0.5s ease-out;
+}
+
+.achievement-notification .achievement-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+.achievement-notification .achievement-tag {
+    background: #f1c40f;
+    color: #2c3e50;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.achievement-notification.fade-out {
+    animation: slideOut 0.5s ease-in forwards;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(120%); opacity: 0; }
+}
+
+@keyframes iconPop {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.click-effect {
+    position: absolute;
+    color: #3498db;
+    font-weight: bold;
+    pointer-events: none;
+    animation: floatUp 1s ease-out forwards;
+    z-index: 1000;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50px) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Settings Panel */
+.settings-container {
+    padding: 20px;
+    color: #fff;
+}
+
+.settings-container h2 {
+    margin-bottom: 30px;
+    color: #3498db;
+    font-size: 28px;
+}
+
+.settings-group {
+    background: rgba(44, 62, 80, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings-group h3 {
+    color: #3498db;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.setting-item label {
+    color: #fff;
+    font-size: 16px;
+}
+
+.setting-item select {
+    background: rgba(52, 152, 219, 0.1);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 150px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.setting-item select:hover {
+    background: rgba(52, 152, 219, 0.2);
+    border-color: rgba(52, 152, 219, 0.5);
+}
+
+.setting-item select option {
+    background: #2c3e50;
+    color: #fff;
+}
+
+/* Game Data Buttons */
+.settings-button {
+    background: rgba(52, 152, 219, 0.1);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.settings-button:hover {
+    background: rgba(52, 152, 219, 0.2);
+    border-color: rgba(52, 152, 219, 0.5);
+    transform: translateY(-1px);
+}
+
+.settings-button.danger {
+    background: rgba(231, 76, 60, 0.1);
+    border-color: rgba(231, 76, 60, 0.3);
+    color: #e74c3c;
+}
+
+.settings-button.danger:hover {
+    background: rgba(231, 76, 60, 0.2);
+    border-color: rgba(231, 76, 60, 0.5);
+}
+
+/* Statistics Section */
+.stats-grid {
+    display: grid;
+    gap: 15px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-item .stat-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+.stat-item span:last-child {
+    color: #3498db;
+    font-weight: 500;
+}
+
+.nav-button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.manager-card.hidden {
+    display: none;
+}
+
+/* Confirmation Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(44, 62, 80, 0.95);
+    padding: 25px;
+    border-radius: 12px;
+    min-width: 300px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal h3 {
+    color: #3498db;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+#confirmationMessage {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.modal-button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: rgba(52, 152, 219, 0.1);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    color: #fff;
+}
+
+.modal-button:hover {
+    background: rgba(52, 152, 219, 0.2);
+    border-color: rgba(52, 152, 219, 0.5);
+    transform: translateY(-1px);
+}
+
+.modal-button.danger {
+    background: rgba(231, 76, 60, 0.1);
+    border-color: rgba(231, 76, 60, 0.3);
+    color: #e74c3c;
+}
+
+.modal-button.danger:hover {
+    background: rgba(231, 76, 60, 0.2);
+    border-color: rgba(231, 76, 60, 0.5);
+}
+
+.save-indicator {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(44, 62, 80, 0.9);
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.save-indicator.show {
+    opacity: 1;
+}
+
+.save-indicator i {
+    color: #3498db;
+}
+
+.notification.tutorial {
+    background: rgba(46, 204, 113, 0.95);
+    border-left: 4px solid #27ae60;
+}
+
+.notification.tutorial i {
+    color: #27ae60;
+}
+
+.tutorial-highlight {
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.notification.achievement {
+    background: rgba(241, 196, 15, 0.95);
+    border-left: 4px solid #f39c12;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.notification.achievement:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.notification.achievement i {
+    color: #f39c12;
+}
+
+/* Automated employee styling */
+.progress-bar.automated {
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(39, 174, 96, 0.2) 100%);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    animation: automatedPulse 2s infinite;
+}
+
+.progress-bar.automated .progress-fill {
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+}
+
+.automation-status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #27ae60;
+    font-size: 0.9em;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+.automation-status i {
+    font-size: 0.8em;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Manager button owned state */
+.manager-button.owned {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: white;
+    cursor: default;
+}
+
+.manager-button.owned .status {
+    font-size: 0.9em;
+    opacity: 0.9;
+    margin-top: 5px;
+} 

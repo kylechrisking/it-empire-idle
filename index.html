@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Empire Idle</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="save-indicator" id="saveIndicator">
+            <i class="fas fa-save"></i>
+            <span>Last saved: Just now</span>
+        </div>
+        <div class="notification" id="notification" style="display: none;">
+            <div class="notification-content">
+                <i class="fas fa-lock"></i>
+                <span id="notificationText"></span>
+                <button class="notification-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="event-banner" id="eventBanner">
+            <div class="event-content">
+                <i class="fas fa-bolt"></i>
+                <div class="event-info">
+                    <h3 class="event-title"></h3>
+                    <p class="event-description"></p>
+                    <div class="event-timer"></div>
+                </div>
+            </div>
+        </div>
+        <header>
+            <div class="header-container">
+                <div class="game-title">
+                    <i class="fas fa-network-wired"></i>
+                    <h1>IT Empire Idle</h1>
+                </div>
+                <div class="stats-container">
+                    <div class="primary-stats">
+                        <div class="stat-chip primary">
+                            <i class="fas fa-database"></i>
+                            <div class="stat-info">
+                                <span class="stat-value" id="data">0</span>
+                                <span class="stat-label">GB</span>
+                            </div>
+                        </div>
+                        <div class="stat-chip secondary">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <div class="stat-info">
+                                <span class="stat-value" id="dataPerSecond">0</span>
+                                <span class="stat-label">GB/s</span>
+                            </div>
+                        </div>
+                        <div class="stat-chip accent">
+                            <i class="fas fa-mouse-pointer"></i>
+                            <div class="stat-info">
+                                <span class="stat-value" id="clickValue">1</span>
+                                <span class="stat-label">GB/Click</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+            <div class="panels-container">
+                <div id="employeesPanel" class="panel active">
+                    <div class="employee-list">
+                        <!-- Technicians Section -->
+                        <div class="role-section visible" id="technicianSection">
+                            <div class="employee-tier">
+                                <!-- Tech I -->
+                                <div class="tech-row">
+                                    <div class="employee-card" id="tech1Card">
+                                        <div class="hire-section">
+                                            <button id="hireTech1" class="hire-button">
+                                                <i class="fas fa-user-tie"></i>
+                                                <span class="title">Technician I</span>
+                                                <span class="cost">Cost: 25 GB</span>
+                                                <span class="reward">Earns 15 GB per task</span>
+                                            </button>
+                                        </div>
+                                        <div class="employee-active" style="display: none;">
+                                            <div class="employee-info">
+                                                <div class="employee-details">
+                                                    <span class="name">Technician</span>
+                                                    <span class="rate">15 GB/task</span>
+                                                </div>
+                                                <!-- Automation status will be added here dynamically -->
+                                            </div>
+                                            <div class="progress-bar" data-employee="tech1">
+                                                <div class="progress-fill"></div>
+                                                <div class="progress-text">Click to start task</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tech II -->
+                                <div class="tech-row">
+                                    <div class="employee-card" id="tech2Card">
+                                        <div class="hire-section">
+                                            <button id="hireTech2" class="hire-button" disabled>
+                                                <i class="fas fa-user-tie"></i>
+                                                <span class="title">Technician II</span>
+                                                <span class="cost">Cost: 250 GB</span>
+                                                <span class="reward">Earns 75 GB per task</span>
+                                            </button>
+                                        </div>
+                                        <div class="employee-active" style="display: none;">
+                                            <div class="employee-info">
+                                                <i class="fas fa-user-tie"></i>
+                                                <div class="employee-details">
+                                                    <span class="name">Technician II</span>
+                                                    <span class="rate">75 GB / 12s</span>
+                                                </div>
+                                            </div>
+                                            <div class="progress-bar" id="tech2Progress">
+                                                <div class="progress-fill"></div>
+                                                <span class="progress-text">Click to Start</span>
+                                            </div>
+                                            <div class="task-complete-effect">
+                                                <div class="data-particle">+<span class="reward-amount"></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tech III -->
+                                <div class="tech-row">
+                                    <div class="employee-card" id="tech3Card">
+                                        <div class="hire-section">
+                                            <button id="hireTech3" class="hire-button" disabled>
+                                                <i class="fas fa-user-tie"></i>
+                                                <span class="title">Technician III</span>
+                                                <span class="cost">Cost: 2,500 GB</span>
+                                                <span class="reward">Earns 375 GB per task</span>
+                                            </button>
+                                        </div>
+                                        <div class="employee-active" style="display: none;">
+                                            <div class="employee-info">
+                                                <i class="fas fa-user-tie"></i>
+                                                <div class="employee-details">
+                                                    <span class="name">Technician III</span>
+                                                    <span class="rate">375 GB / 16s</span>
+                                                </div>
+                                            </div>
+                                            <div class="progress-bar" id="tech3Progress">
+                                                <div class="progress-fill"></div>
+                                                <span class="progress-text">Click to Start</span>
+                                            </div>
+                                            <div class="task-complete-effect">
+                                                <div class="data-particle">+<span class="reward-amount"></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Engineers Section (Initially Hidden) -->
+                        <div class="role-section" id="sysEngSection" style="display: none;">
+                            <div class="role-divider">
+                                <div class="divider-line"></div>
+                                <div class="divider-text">System Engineers</div>
+                                <div class="divider-line"></div>
+                            </div>
+                            <div class="employee-tier">
+                                <!-- Sys Eng I -->
+                                <div class="tech-row">
+                                    <div class="employee-card" id="sysEng1Card">
+                                        <div class="hire-section">
+                                            <button id="hireSysEng1" class="hire-button" disabled>
+                                                <i class="fas fa-server"></i>
+                                                <span class="title">System Engineer I</span>
+                                                <span class="cost">Cost: 5,000 GB</span>
+                                                <span class="reward">Earns 500 GB per task</span>
+                                                <span class="requirement">Requires: 2 Technicians</span>
+                                            </button>
+                                        </div>
+                                        <div class="employee-active" style="display: none;">
+                                            <div class="employee-info">
+                                                <i class="fas fa-server"></i>
+                                                <div class="employee-details">
+                                                    <span class="name">System Engineer I</span>
+                                                    <span class="rate">500 GB / 30s</span>
+                                                </div>
+                                            </div>
+                                            <div class="progress-bar" id="sysEng1Progress">
+                                                <div class="progress-fill"></div>
+                                                <span class="progress-text">Click to Start</span>
+                                            </div>
+                                            <div class="task-complete-effect">
+                                                <div class="data-particle">+<span class="reward-amount"></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sys Eng II -->
+                                <div class="tech-row">
+                                    <div class="employee-card" id="sysEng2Card">
+                                        <div class="hire-section">
+                                            <button id="hireSysEng2" class="hire-button" disabled>
+                                                <i class="fas fa-server"></i>
+                                                <span class="title">System Engineer II</span>
+                                                <span class="cost">Cost: 10,000 GB</span>
+                                                <span class="reward">Earns 1,000 GB per task</span>
+                                                <span class="requirement">Requires: 3 Technicians</span>
+                                            </button>
+                                        </div>
+                                        <div class="employee-active" style="display: none;">
+                                            <div class="employee-info">
+                                                <i class="fas fa-server"></i>
+                                                <div class="employee-details">
+                                                    <span class="name">System Engineer II</span>
+                                                    <span class="rate">1,000 GB / 45s</span>
+                                                </div>
+                                            </div>
+                                            <div class="progress-bar" id="sysEng2Progress">
+                                                <div class="progress-fill"></div>
+                                                <span class="progress-text">Click to Start</span>
+                                            </div>
+                                            <div class="task-complete-effect">
+                                                <div class="data-particle">+<span class="reward-amount"></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sys Eng III -->
+                                <div class="tech-row">
+                                    <div class="employee-card" id="sysEng3Card">
+                                        <div class="hire-section">
+                                            <button id="hireSysEng3" class="hire-button" disabled>
+                                                <i class="fas fa-server"></i>
+                                                <span class="title">System Engineer III</span>
+                                                <span class="cost">Cost: 20,000 GB</span>
+                                                <span class="reward">Earns 2,000 GB per task</span>
+                                                <span class="requirement">Requires: 4 Technicians</span>
+                                            </button>
+                                        </div>
+                                        <div class="employee-active" style="display: none;">
+                                            <div class="employee-info">
+                                                <i class="fas fa-server"></i>
+                                                <div class="employee-details">
+                                                    <span class="name">System Engineer III</span>
+                                                    <span class="rate">2,000 GB / 60s</span>
+                                                </div>
+                                            </div>
+                                            <div class="progress-bar" id="sysEng3Progress">
+                                                <div class="progress-fill"></div>
+                                                <span class="progress-text">Click to Start</span>
+                                            </div>
+                                            <div class="task-complete-effect">
+                                                <div class="data-particle">+<span class="reward-amount"></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Developers Section (Initially Hidden) -->
+                        <div class="role-section" id="devSection" style="display: none;">
+                            <div class="role-divider">
+                                <div class="divider-line"></div>
+                                <div class="divider-text">Developers</div>
+                                <div class="divider-line"></div>
+                            </div>
+                            <div class="employee-tier">
+                                <!-- Dev I -->
+                                <div class="tech-row">
+                                    <div class="employee-card" id="dev1Card">
+                                        <div class="hire-section">
+                                            <button id="hireDev1" class="hire-button" disabled>
+                                                <i class="fas fa-code"></i>
+                                                <span class="title">Developer I</span>
+                                                <span class="cost">Cost: 10,000 GB</span>
+                                                <span class="reward">Earns 1,000 GB per task</span>
+                                                <span class="requirement">Requires: System Engineer I</span>
+                                            </button>
+                                        </div>
+                                        <div class="employee-active" style="display: none;">
+                                            <div class="employee-info">
+                                                <i class="fas fa-code"></i>
+                                                <div class="employee-details">
+                                                    <span class="name">Developer I</span>
+                                                    <span class="rate">1,000 GB / 45s</span>
+                                                </div>
+                                            </div>
+                                            <div class="progress-bar" id="dev1Progress">
+                                                <div class="progress-fill"></div>
+                                                <span class="progress-text">Click to Start</span>
+                                            </div>
+                                            <div class="task-complete-effect">
+                                                <div class="data-particle">+<span class="reward-amount"></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dev II -->
+                                <div class="tech-row">
+                                    <div class="employee-card" id="dev2Card">
+                                        <div class="hire-section">
+                                            <button id="hireDev2" class="hire-button" disabled>
+                                                <i class="fas fa-code"></i>
+                                                <span class="title">Developer II</span>
+                                                <span class="cost">Cost: 20,000 GB</span>
+                                                <span class="reward">Earns 2,000 GB per task</span>
+                                                <span class="requirement">Requires: System Engineer II</span>
+                                            </button>
+                                        </div>
+                                        <div class="employee-active" style="display: none;">
+                                            <div class="employee-info">
+                                                <i class="fas fa-code"></i>
+                                                <div class="employee-details">
+                                                    <span class="name">Developer II</span>
+                                                    <span class="rate">2,000 GB / 60s</span>
+                                                </div>
+                                            </div>
+                                            <div class="progress-bar" id="dev2Progress">
+                                                <div class="progress-fill"></div>
+                                                <span class="progress-text">Click to Start</span>
+                                            </div>
+                                            <div class="task-complete-effect">
+                                                <div class="data-particle">+<span class="reward-amount"></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dev III -->
+                                <div class="tech-row">
+                                    <div class="employee-card" id="dev3Card">
+                                        <div class="hire-section">
+                                            <button id="hireDev3" class="hire-button" disabled>
+                                                <i class="fas fa-code"></i>
+                                                <span class="title">Developer III</span>
+                                                <span class="cost">Cost: 30,000 GB</span>
+                                                <span class="reward">Earns 3,000 GB per task</span>
+                                                <span class="requirement">Requires: System Engineer III</span>
+                                            </button>
+                                        </div>
+                                        <div class="employee-active" style="display: none;">
+                                            <div class="employee-info">
+                                                <i class="fas fa-code"></i>
+                                                <div class="employee-details">
+                                                    <span class="name">Developer III</span>
+                                                    <span class="rate">3,000 GB / 75s</span>
+                                                </div>
+                                            </div>
+                                            <div class="progress-bar" id="dev3Progress">
+                                                <div class="progress-fill"></div>
+                                                <span class="progress-text">Click to Start</span>
+                                            </div>
+                                            <div class="task-complete-effect">
+                                                <div class="data-particle">+<span class="reward-amount"></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="upgradesPanel" class="panel">
+                    <div class="upgrade-grid">
+                        <div class="upgrade-card">
+                            <button id="speedUpgrade" class="upgrade-button">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span class="title">Faster Computers</span>
+                                <span class="cost">25 GB</span>
+                                <span class="effect">Task Speed +10%</span>
+                                <span class="level">Level: <span id="speedLevel">0</span></span>
+                            </button>
+                        </div>
+                        <div class="upgrade-card">
+                            <button id="clickUpgrade" class="upgrade-button">
+                                <i class="fas fa-hand-pointer"></i>
+                                <span class="title">Better Tools</span>
+                                <span class="cost">50 GB</span>
+                                <span class="effect">Click Value +1</span>
+                                <span class="level">Level: <span id="clickLevel">0</span></span>
+                            </button>
+                        </div>
+                        <div class="upgrade-card">
+                            <button id="revenueUpgrade" class="upgrade-button">
+                                <i class="fas fa-coins"></i>
+                                <span class="title">Premium Services</span>
+                                <span class="cost">100 GB</span>
+                                <span class="effect">All Income +15%</span>
+                                <span class="level">Level: <span id="revenueLevel">0</span></span>
+                            </button>
+                        </div>
+                        <div class="upgrade-card">
+                            <button id="automationUpgrade" class="upgrade-button">
+                                <i class="fas fa-robot"></i>
+                                <span class="title">Process Automation</span>
+                                <span class="cost">500 GB</span>
+                                <span class="effect">Manager Speed +20%</span>
+                                <span class="level">Level: <span id="automationLevel">0</span></span>
+                            </button>
+                        </div>
+                        <div class="upgrade-card">
+                            <button id="efficiencyUpgrade" class="upgrade-button">
+                                <i class="fas fa-chart-line"></i>
+                                <span class="title">Efficiency Training</span>
+                                <span class="cost">1,000 GB</span>
+                                <span class="effect">25% Double Reward Chance</span>
+                                <span class="level">Level: <span id="efficiencyLevel">0</span></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="managersPanel" class="panel">
+                    <div class="manager-grid">
+                        <div class="manager-card" id="techManager1Card">
+                            <button id="hireTechManager1" class="manager-button">
+                                <i class="fas fa-user-tie"></i>
+                                <span class="title">Junior Manager</span>
+                                <span class="cost">Cost: 100 GB</span>
+                                <span class="description">Automates one Technician</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="settingsPanel" class="panel">
+                    <div class="settings-container">
+                        <h2>Game Settings</h2>
+                        
+                        <!-- Game Options -->
+                        <div class="settings-group">
+                            <h3>Display Options</h3>
+                            <div class="setting-item">
+                                <label for="notificationDuration">Notification Duration</label>
+                                <select id="notificationDuration">
+                                    <option value="2000">2 seconds</option>
+                                    <option value="3000" selected>3 seconds</option>
+                                    <option value="5000">5 seconds</option>
+                                    <option value="0">Stay until closed</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label for="progressAnimation">Progress Bar Animation</label>
+                                <select id="progressAnimation">
+                                    <option value="smooth" selected>Smooth</option>
+                                    <option value="step">Step by Step</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Game Data -->
+                        <div class="settings-group">
+                            <h3>Game Data</h3>
+                            <div class="setting-item">
+                                <button id="manualSave" class="settings-button">
+                                    <i class="fas fa-save"></i>
+                                    Save Game
+                                </button>
+                                <button id="exportSave" class="settings-button">
+                                    <i class="fas fa-download"></i>
+                                    Export Save
+                                </button>
+                                <button id="importSave" class="settings-button">
+                                    <i class="fas fa-upload"></i>
+                                    Import Save
+                                </button>
+                                <input type="file" id="saveFileInput" style="display: none;" accept=".json">
+                            </div>
+                            <div class="setting-item">
+                                <button id="resetGame" class="settings-button danger">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Reset Game
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Statistics -->
+                        <div class="settings-group">
+                            <h3>Statistics</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Data Generated:</span>
+                                    <span id="totalDataStat">0 GB</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Clicks:</span>
+                                    <span id="totalClicksStat">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Play Time:</span>
+                                    <span id="playTimeStat">0:00:00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation Modal -->
+                    <div id="confirmationModal" class="modal">
+                        <div class="modal-content">
+                            <h3>Confirm Action</h3>
+                            <p id="confirmationMessage"></p>
+                            <div class="modal-buttons">
+                                <button id="confirmYes" class="modal-button danger">Yes</button>
+                                <button id="confirmNo" class="modal-button">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="achievementsPanel" class="panel">
+                    <div class="achievements-container">
+                        <!-- Achievement Summary -->
+                        <div class="achievement-summary">
+                            <div class="summary-stat">
+                                <h3>Total Achievements</h3>
+                                <div class="stat-value">
+                                    <span id="achievementCount">0</span>/<span id="totalAchievements">0</span>
+                                </div>
+                            </div>
+                            <div class="completion-bar">
+                                <div class="completion-fill"></div>
+                                <span class="completion-text">0% Complete</span>
+                            </div>
+                        </div>
+
+                        <!-- Achievement Categories -->
+                        <div class="achievements-grid">
+                            <!-- Production Achievements -->
+                            <div class="achievement-category" id="productionAchievements">
+                                <div class="category-header">
+                                    <i class="fas fa-database"></i>
+                                    <h3>Production</h3>
+                                    <span class="category-progress">0/4</span>
+                                </div>
+                                <div class="achievement-list">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Workforce Achievements -->
+                            <div class="achievement-category" id="workforceAchievements">
+                                <div class="category-header">
+                                    <i class="fas fa-users"></i>
+                                    <h3>Workforce</h3>
+                                    <span class="category-progress">0/12</span>
+                                </div>
+                                
+                                <div class="subcategories-grid">
+                                    <!-- Technicians -->
+                                    <div class="achievement-subcategory">
+                                        <h4><i class="fas fa-user-tie"></i> Technical Support</h4>
+                                        <div class="achievement-list" id="techAchievements">
+                                            <!-- Populated by JS -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Engineers -->
+                                    <div class="achievement-subcategory">
+                                        <h4><i class="fas fa-server"></i> System Engineering</h4>
+                                        <div class="achievement-list" id="engAchievements">
+                                            <!-- Populated by JS -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Developers -->
+                                    <div class="achievement-subcategory">
+                                        <h4><i class="fas fa-code"></i> Development</h4>
+                                        <div class="achievement-list" id="devAchievements">
+                                            <!-- Populated by JS -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Workforce Milestones -->
+                                    <div class="achievement-subcategory">
+                                        <h4><i class="fas fa-star"></i> Milestones</h4>
+                                        <div class="achievement-list" id="workforceMilestones">
+                                            <!-- Populated by JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-container">
+                <nav class="bottom-nav">
+                    <button class="nav-button active" data-panel="employeesPanel">
+                        <i class="fas fa-users"></i>
+                        Employees
+                    </button>
+                    <button class="nav-button" data-panel="upgradesPanel">
+                        <i class="fas fa-arrow-up"></i>
+                        Upgrades
+                    </button>
+                    <button class="nav-button" data-panel="managersPanel">
+                        <i class="fas fa-user-tie"></i>
+                        Managers
+                    </button>
+                    <button class="nav-button" data-panel="achievementsPanel">
+                        <i class="fas fa-trophy"></i>
+                        Achievements
+                    </button>
+                    <button class="nav-button" data-panel="settingsPanel">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </button>
+                </nav>
+
+                <div class="click-action">
+                    <button id="fixComputer" class="action-button">
+                        <i class="fas fa-desktop"></i>
+                        <span>Fix Computer (+1 GB)</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="game.js"></script>
+    <script src="effects.js"></script>
+</body>
+</html> 
