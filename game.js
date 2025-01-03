@@ -37,7 +37,9 @@ class Game {
             },
             manager: {
                 employees: {
-                    techManager1: { owned: false, cost: 100, manages: 'technician' }
+                    techManager1: { owned: false, cost: 100, manages: 'tech1' },
+                    techManager2: { owned: false, cost: 1000, manages: 'tech2' },
+                    techManager3: { owned: false, cost: 10000, manages: 'tech3' }
                 }
             }
         };
@@ -96,21 +98,12 @@ class Game {
         this.currentPanel = 'employeesPanel';
         this.initializePanelStates();
 
-        // Initialize game systems
-        this.initialize();
-
-        // Load tutorial state
-        this.loadTutorialState();
-
-        // Add save-related properties
+        // Initialize save-related properties
         this.autoSaveInterval = null;
         this.lastSaveTime = Date.now();
-        
-        // Load save data after initialization
-        this.loadGame();
-        
-        // Start auto-save
-        this.startAutoSave();
+
+        // Initialize the game
+        this.initialize();
 
         // Add page unload handler
         window.addEventListener('beforeunload', () => {
@@ -121,14 +114,28 @@ class Game {
     }
 
     initialize() {
+        // First load save data
+        this.loadGame();
+        
+        // Set up basic handlers
         this.setupClickHandlers();
         this.setupPanelHandlers();
         this.setupHireHandlers();
         this.setupEmployeeHandlers();
-        this.setupManagerHandlers();
+        this.setupUpgradeHandlers();
         this.setupSettingsHandlers();
+        
+        // Update display first time
         this.updateDisplay();
+        
+        // Set up manager handlers last (since they depend on DOM elements)
+        setTimeout(() => {
+            this.setupManagerHandlers();
+        }, 0);
+        
+        // Start game systems
         this.startGameLoop();
+        this.startAutoSave();
     }
 
     setupClickHandlers() {
@@ -190,7 +197,7 @@ class Game {
         }
         
         // Check if player can hire first tech
-        if (this.data >= 25 && !this.hasShownTechTutorial) {
+        if (!this.hasShownTechTutorial && this.data >= 25) {
             this.hasShownTechTutorial = true;
             this.showNextTutorialStep('canHireTech');
         }
@@ -198,22 +205,34 @@ class Game {
 
     updateDisplay() {
         // Update data display
-        document.getElementById('data').textContent = Math.floor(this.data);
-        
+        const dataDisplay = document.getElementById('dataDisplay');
+        if (dataDisplay) {
+            dataDisplay.textContent = Math.floor(this.data);
+        }
+
         // Update DPS display
-        document.getElementById('dataPerSecond').textContent = this.calculateDataPerSecond();
-        
-        // Update click value display
-        const clickButton = document.getElementById('fixComputer');
-        if (clickButton) {
-            const clickSpan = clickButton.querySelector('span');
-            if (clickSpan) {
-                const totalClickValue = Math.round(this.clickValue * (1 + this.achievementBonuses.clickValue));
-                clickSpan.textContent = `Fix Computer (+${totalClickValue} GB)`;
+        const dpsDisplay = document.getElementById('dpsDisplay');
+        if (dpsDisplay) {
+            const dps = this.calculateDPS();
+            dpsDisplay.textContent = Math.round(dps);
+            
+            // Update peak DPS if current DPS is higher
+            if (dps > this.statistics.peakDPS) {
+                this.statistics.peakDPS = dps;
             }
         }
 
-        // Check unlocks after display update
+        // Update click value display
+        const clickValueDisplay = document.getElementById('clickValueDisplay');
+        if (clickValueDisplay) {
+            const totalClickValue = Math.round(this.clickValue * (1 + this.achievementBonuses.clickValue));
+            clickValueDisplay.textContent = totalClickValue;
+        }
+
+        // Update technician buttons
+        this.updateTechnicianButtons();
+
+        // Check for unlocks
         this.checkUnlocks();
     }
 
@@ -306,58 +325,78 @@ class Game {
         if (!employee.owned && this.data >= employee.cost) {
             this.data -= employee.cost;
             employee.owned = true;
-            
-            // Update display
+            employee.automated = false; // Make sure automation is off by default
+
+            // Show the active section and hide hire section
+            const card = document.getElementById(`${empId}Card`);
+            if (card) {
+                const hireSection = card.querySelector('.hire-section');
+                const activeSection = card.querySelector('.employee-active');
+                
+                if (hireSection && activeSection) {
+                    hireSection.style.display = 'none';
+                    activeSection.style.display = 'block';
+                }
+            }
+
+            // Update displays
             this.updateEmployeeDisplay(roleName, empId);
-            
-            // Re-setup employee handlers
-            this.setupEmployeeHandlers();
-            
-            // Update general display
             this.updateDisplay();
             
             // Show notification
-            this.showNotification(`Hired ${empId.charAt(0).toUpperCase() + empId.slice(1)}!`);
-            
-            // Check unlocks and tutorial
-            this.checkUnlocks();
-            
-            if (this.countOwnedEmployees('technician') === 1) {
+            this.showNotification(`${this.getTechnicianTitle(empId)} hired!`);
+
+            // Check for tutorial progress
+            if (empId === 'tech1') {
                 this.showNextTutorialStep('techHired');
-                // Highlight the progress bar
-                const progressBar = document.querySelector(`.progress-bar[data-employee="${empId}"]`);
-                if (progressBar) {
-                    progressBar.classList.add('tutorial-highlight');
-                }
             }
+
+            // Check unlocks
+            this.checkUnlocks();
         }
     }
 
     handleManagerHire(managerId) {
         const manager = this.roles.manager.employees[managerId];
         if (!manager.owned && this.data >= manager.cost) {
+            // Purchase the manager
             this.data -= manager.cost;
             manager.owned = true;
             
-            // Find first non-automated technician and automate it
-            const techs = Object.entries(this.roles.technician.employees);
-            for (const [techId, tech] of techs) {
-                if (tech.owned && !tech.automated) {
-                    tech.automated = true;
-                    this.updateEmployeeAutomationStatus(techId);
-                    // Start the automated task immediately
-                    this.startTask('technician', techId);
-                    break;
-                }
+            // Update UI
+            const button = document.getElementById(`hire${managerId}`);
+            if (button) {
+                button.classList.add('owned');
+                button.disabled = true;
+                button.innerHTML = `
+                    <div class="manager-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="manager-info">
+                        <span class="title">${this.getManagerTitle(managerId)}</span>
+                        <div class="status">
+                            <i class="fas fa-check-circle"></i>
+                            Managing ${this.getTechnicianTitle(manager.manages)}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Start automation
+            const targetTech = manager.manages;
+            if (this.roles.technician.employees[targetTech]) {
+                this.roles.technician.employees[targetTech].automated = true;
+                this.automateEmployee(managerId);
             }
             
-            // Update manager display
-            this.updateManagerDisplay(managerId);
+            // Update display
             this.updateDisplay();
             
             // Show notification
-            this.showNotification('Junior Manager hired! Your Technician is now automated.');
-            this.showNextTutorialStep('managerHired');
+            this.showNotification(`${this.getManagerTitle(managerId)} hired! ${this.getTechnicianTitle(manager.manages)} is now automated.`);
+            
+            // Save the game
+            this.saveGame();
         }
     }
 
@@ -406,16 +445,23 @@ class Game {
 
     calculateDataPerSecond() {
         let dps = 0;
-        Object.entries(this.roles).forEach(([roleName, role]) => {
-            Object.entries(role.employees).forEach(([empId, employee]) => {
-                if (employee.owned) {
-                    const baseReward = employee.baseReward;
-                    const taskTime = employee.baseTaskTime / 1000; // Convert to seconds
-                    dps += baseReward / taskTime;
-                }
-            });
+        
+        // Calculate DPS from technicians
+        Object.entries(this.roles.technician.employees).forEach(([techId, tech]) => {
+            if (tech.owned) {
+                const baseReward = tech.baseReward;
+                const taskTime = tech.baseTaskTime / 1000; // Convert to seconds
+                const rewardPerSecond = baseReward / taskTime;
+                dps += rewardPerSecond;
+            }
         });
-        return Math.round(dps);
+        
+        // Apply income bonus if any
+        if (this.achievementBonuses.income) {
+            dps *= (1 + this.achievementBonuses.income);
+        }
+        
+        return Math.round(dps * 10) / 10; // Round to 1 decimal place
     }
 
     updateEmployeeDisplay(roleName, empId) {
@@ -509,14 +555,21 @@ class Game {
     }
 
     setupHireHandlers() {
-        // Set up hire button handlers for each employee
-        Object.keys(this.roles).forEach(roleName => {
-            Object.keys(this.roles[roleName].employees).forEach(empId => {
-                const hireButton = document.getElementById(`hire${empId.charAt(0).toUpperCase() + empId.slice(1)}`);
-                if (hireButton) {
-                    hireButton.addEventListener('click', () => {
-                        this.handleEmployeeHire(roleName, empId);
-                    });
+        // Handle technician hiring
+        Object.entries(this.roles.technician.employees).forEach(([techId, tech]) => {
+            const button = document.getElementById(`hire${techId.charAt(0).toUpperCase() + techId.slice(1)}`);
+            if (!button) {
+                console.error(`Hire button not found for ${techId}`);
+                return;
+            }
+
+            // Remove any existing listeners
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+
+            newButton.addEventListener('click', () => {
+                if (this.data >= tech.cost && !tech.owned) {
+                    this.handleEmployeeHire('technician', techId);
                 }
             });
         });
@@ -528,14 +581,43 @@ class Game {
         return employees.length > 0 && employees.every(emp => emp.owned && emp.automated);
     }
 
-    automateEmployee(roleName, empId) {
-        if (this.roles[roleName]?.employees[empId]) {
-            this.roles[roleName].employees[empId].automated = true;
-            this.updateEmployeeDisplay(roleName, empId);
+    automateEmployee(managerId) {
+        const manager = this.roles.manager.employees[managerId];
+        const targetTech = manager.manages;
+        const employee = this.roles.technician.employees[targetTech];
+        
+        if (!employee || !employee.owned) {
+            console.error('Target employee not found or not owned:', targetTech);
+            return;
         }
+
+        // Mark the employee as automated
+        employee.automated = true;
+        
+        // Update the progress bar appearance
+        const progressBar = document.querySelector(`#${targetTech}Card .progress-bar`);
+        if (progressBar) {
+            progressBar.classList.add('automated');
+            const progressText = progressBar.querySelector('.progress-text');
+            if (progressText) {
+                progressText.textContent = 'Automated';
+            }
+        }
+        
+        // Start the automation loop
+        this.startTask('technician', targetTech);
     }
 
     setupSettingsHandlers() {
+        const resetButton = document.getElementById('resetGame');
+        if (resetButton) {
+            resetButton.addEventListener('click', () => {
+                if (confirm('Are you sure you want to reset the game? This will delete all progress and cannot be undone.')) {
+                    this.resetGame();
+                }
+            });
+        }
+
         // Export save
         document.getElementById('exportSave')?.addEventListener('click', () => {
             const saveData = this.getSaveData();
@@ -572,37 +654,6 @@ class Game {
             }
         });
 
-        // Reset game
-        document.getElementById('resetGame')?.addEventListener('click', () => {
-            const modal = document.getElementById('confirmationModal');
-            const message = document.getElementById('confirmationMessage');
-            
-            if (modal && message) {
-                message.textContent = 'Are you sure you want to reset all progress? This cannot be undone.';
-                modal.style.display = 'block';
-
-                const handleYes = () => {
-                    this.resetGame();
-                    modal.style.display = 'none';
-                    this.showNotification('Game has been reset');
-                    cleanup();
-                };
-
-                const handleNo = () => {
-                    modal.style.display = 'none';
-                    cleanup();
-                };
-
-                const cleanup = () => {
-                    document.getElementById('confirmYes').removeEventListener('click', handleYes);
-                    document.getElementById('confirmNo').removeEventListener('click', handleNo);
-                };
-
-                document.getElementById('confirmYes').addEventListener('click', handleYes);
-                document.getElementById('confirmNo').addEventListener('click', handleNo);
-            }
-        });
-
         // Manual save button
         document.getElementById('manualSave')?.addEventListener('click', () => {
             this.saveGame();
@@ -622,54 +673,23 @@ class Game {
     }
 
     resetGame() {
-        // Reset base properties
-        this.data = 0;
-        this.clickValue = 1;
+        // Clear all local storage
+        localStorage.removeItem('gameState');
+        localStorage.removeItem('tutorialState');
+        localStorage.removeItem('itEmpireSave');
         
-        // Reset statistics
-        this.statistics = {
-            totalDataGenerated: 0,
-            totalClicks: 0,
-            peakDPS: 0,
-            timeSpentPlaying: 0
-        };
-        
-        // Reset roles and employees
-        this.roles = {
-            technician: {
-                employees: {
-                    tech1: { owned: false, automated: false, cost: 25, baseReward: 15, baseTaskTime: 8000 },
-                    tech2: { owned: false, automated: false, cost: 250, baseReward: 75, baseTaskTime: 12000 },
-                    tech3: { owned: false, automated: false, cost: 2500, baseReward: 375, baseTaskTime: 16000 }
-                }
-            },
-            manager: {
-                employees: {
-                    techManager1: { owned: false, cost: 100, manages: 'technician' }
-                }
-            }
-        };
-        
-        // Reset achievement bonuses
-        this.achievementBonuses = {
-            taskSpeed: 0,
-            income: 0,
-            clickValue: 0
-        };
-
-        // Clear all task timers
-        Object.keys(this.taskTimers).forEach(timerId => {
-            clearInterval(this.taskTimers[timerId]);
+        // Clear all intervals
+        Object.keys(this.taskTimers).forEach(timer => {
+            clearInterval(this.taskTimers[timer]);
         });
-        this.taskTimers = {};
-
-        // Reset tutorial state
-        this.tutorialState.currentStep = 0;
-        this.tutorialState.completed = false;
         
-        // Update display
-        this.updateDisplay();
-        this.checkUnlocks();
+        // Clear auto-save interval
+        if (this.autoSaveInterval) {
+            clearInterval(this.autoSaveInterval);
+        }
+        
+        // Reload the page to start fresh
+        window.location.reload();
     }
 
     // Clean up method to prevent memory leaks
@@ -728,34 +748,73 @@ class Game {
     }
 
     loadGame() {
-        try {
-            const savedGame = localStorage.getItem('itEmpireSave');
-            if (savedGame) {
-                const saveData = JSON.parse(savedGame);
+        const savedData = localStorage.getItem('itEmpireSave');
+        if (savedData) {
+            try {
+                const loadedState = JSON.parse(savedData);
                 
-                // Load saved data without resetting first
-                this.data = saveData.data || 0;
-                this.clickValue = saveData.clickValue || 1;
-                this.statistics = saveData.statistics || this.statistics;
-                this.roles = saveData.roles || this.roles;
-                this.achievementBonuses = saveData.achievementBonuses || this.achievementBonuses;
-                this.tutorialState = saveData.tutorialState || this.tutorialState;
+                // Restore game state
+                this.data = loadedState.data || 0;
+                this.clickValue = loadedState.clickValue || 1;
+                this.statistics = loadedState.statistics || this.statistics;
+                this.achievementBonuses = loadedState.achievementBonuses || this.achievementBonuses;
                 
-                // Calculate offline progress
-                const timeDiff = Date.now() - (saveData.lastSaveTime || Date.now());
-                if (timeDiff > 0 && timeDiff < 24 * 60 * 60 * 1000) {
-                    this.calculateOfflineProgress(timeDiff);
+                // Restore employee states
+                if (loadedState.roles) {
+                    Object.entries(loadedState.roles).forEach(([roleName, role]) => {
+                        Object.entries(role.employees).forEach(([empId, employee]) => {
+                            if (employee.owned) {
+                                this.roles[roleName].employees[empId].owned = true;
+                                this.roles[roleName].employees[empId].automated = employee.automated || false;
+                                
+                                // Update the UI for owned employees
+                                this.updateEmployeeDisplay(roleName, empId);
+                            }
+                        });
+                    });
                 }
-                
-                // Update displays and restore automated tasks
+
+                // Restore manager states and automation
+                if (loadedState.roles?.manager?.employees) {
+                    Object.entries(loadedState.roles.manager.employees).forEach(([managerId, manager]) => {
+                        if (manager.owned) {
+                            this.roles.manager.employees[managerId].owned = true;
+                            // Update manager UI
+                            const button = document.getElementById(`hire${managerId}`);
+                            if (button) {
+                                button.classList.add('owned');
+                                button.disabled = true;
+                                button.innerHTML = `
+                                    <div class="manager-icon">
+                                        <i class="fas fa-user-tie"></i>
+                                    </div>
+                                    <div class="manager-info">
+                                        <span class="title">${this.getManagerTitle(managerId)}</span>
+                                        <div class="status">
+                                            <i class="fas fa-check-circle"></i>
+                                            Managing ${this.getTechnicianTitle(manager.manages)}
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                            // Restart automation
+                            this.automateEmployee(managerId);
+                        }
+                    });
+                }
+
+                // Update all displays
                 this.updateDisplay();
                 this.checkUnlocks();
-                this.restoreAutomatedTasks();
-                this.updateAllEmployeeDisplays();
+
+                // Calculate offline progress
+                if (loadedState.lastSaveTime) {
+                    const timeDiff = Date.now() - loadedState.lastSaveTime;
+                    this.calculateOfflineProgress(timeDiff);
+                }
+            } catch (error) {
+                console.error('Error loading save:', error);
             }
-        } catch (error) {
-            console.error('Load error:', error);
-            this.showNotification('Failed to load save data!');
         }
     }
 
@@ -862,96 +921,95 @@ class Game {
     }
 
     startTask(roleName, empId) {
+        console.log('Starting task for:', empId);
         const employee = this.roles[roleName].employees[empId];
-        if (!employee.owned) return;
+        if (!employee || !employee.owned) return;
 
-        const progressBar = document.querySelector(`.progress-bar[data-employee="${empId}"]`);
+        // Don't start a new task if one is already in progress
+        if (this.taskTimers[empId]) return;
+
+        const progressBar = document.querySelector(`#${empId}Card .progress-bar`);
         const progressFill = progressBar?.querySelector('.progress-fill');
         const progressText = progressBar?.querySelector('.progress-text');
         
         if (!progressBar || !progressFill || !progressText) {
-            console.error('Could not find progress bar elements for:', empId);
+            console.error('Progress elements not found for:', empId);
             return;
         }
 
-        // Clear existing timer if any
+        let progress = 0;
+        const taskTime = this.calculateTaskTime(employee.baseTaskTime);
+        const updateInterval = 50; // More frequent updates for smoother animation
+
+        progressFill.style.width = '0%';
+        progressText.textContent = employee.automated ? 'Automated' : 'Working...';
+
+        // Clear any existing timer
         if (this.taskTimers[empId]) {
             clearInterval(this.taskTimers[empId]);
         }
-
-        let progress = 0;
-        const taskTime = employee.baseTaskTime * (1 - this.achievementBonuses.taskSpeed);
-        const updateInterval = 100; // Update every 100ms
-
-        progressFill.style.width = '0%';
-        progressText.textContent = employee.automated ? 'Automated...' : 'Working...';
 
         this.taskTimers[empId] = setInterval(() => {
             progress += (updateInterval / taskTime) * 100;
             
             if (progress >= 100) {
-                progress = 0;
                 this.completeTask(roleName, empId);
+                progress = 0;
+                progressFill.style.width = '0%';
+                
+                // If not automated, clear the timer and reset text
+                if (!employee.automated) {
+                    clearInterval(this.taskTimers[empId]);
+                    this.taskTimers[empId] = null;
+                    progressText.textContent = 'Click to start task';
+                }
+            } else {
+                progressFill.style.width = `${progress}%`;
             }
-            
-            progressFill.style.width = `${progress}%`;
         }, updateInterval);
+    }
 
-        // Trigger tutorial step when first task is started
-        if (!this.hasStartedFirstTask) {
-            this.hasStartedFirstTask = true;
-            this.showNextTutorialStep('taskStarted');
-        }
+    calculateTaskTime(baseTime) {
+        return baseTime * (1 - (this.achievementBonuses.taskSpeed || 0));
     }
 
     completeTask(roleName, empId) {
         const employee = this.roles[roleName].employees[empId];
-        const reward = Math.round(employee.baseReward * (1 + this.achievementBonuses.income));
+        if (!employee || !employee.owned) return;
+
+        // Calculate reward with bonuses
+        let reward = employee.baseReward;
+        if (this.achievementBonuses.income) {
+            reward *= (1 + this.achievementBonuses.income);
+        }
+
+        // Apply efficiency bonus (chance for double reward)
+        if (this.achievementBonuses.efficiency && Math.random() < this.achievementBonuses.efficiency) {
+            reward *= 2;
+        }
+
+        // Add the reward
+        reward = Math.round(reward);
         this.data += reward;
         this.statistics.totalDataGenerated += reward;
+
+        // Update display
         this.updateDisplay();
-
-        // Clear the task timer
-        if (this.taskTimers[empId]) {
-            clearInterval(this.taskTimers[empId]);
-            this.taskTimers[empId] = null;
-        }
-
-        // If automated, restart task
-        if (employee.automated) {
-            this.startTask(roleName, empId);
-        } else {
-            // Reset progress bar
-            const progressBar = document.querySelector(`.progress-bar[data-employee="${empId}"]`);
-            const progressFill = progressBar?.querySelector('.progress-fill');
-            const progressText = progressBar?.querySelector('.progress-text');
-            
-            if (progressFill && progressText) {
-                progressFill.style.width = '0%';
-                progressText.textContent = 'Click to start task';
-            }
-        }
     }
 
     setupEmployeeHandlers() {
-        Object.keys(this.roles).forEach(roleName => {
-            Object.keys(this.roles[roleName].employees).forEach(empId => {
-                const progressBar = document.querySelector(`.progress-bar[data-employee="${empId}"]`);
-                if (progressBar) {
-                    // Remove any existing listeners first
-                    const newProgressBar = progressBar.cloneNode(true);
-                    progressBar.parentNode.replaceChild(newProgressBar, progressBar);
-                    
-                    newProgressBar.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const employee = this.roles[roleName].employees[empId];
-                        if (employee.owned) {
-                            console.log('Starting task for:', empId); // Debug log
-                            this.startTask(roleName, empId);
-                        }
-                    });
-                }
-            });
+        Object.entries(this.roles.technician.employees).forEach(([empId, employee]) => {
+            const progressBar = document.querySelector(`#${empId}Card .progress-bar`);
+            if (progressBar) {
+                progressBar.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (employee.owned && !employee.automated) {
+                        console.log('Progress bar clicked for:', empId);
+                        this.startTask('technician', empId);
+                    }
+                };
+            }
         });
     }
 
@@ -995,14 +1053,65 @@ class Game {
     }
 
     setupManagerHandlers() {
-        Object.keys(this.roles.manager.employees).forEach(managerId => {
-            const hireButton = document.getElementById(`hire${managerId.charAt(0).toUpperCase() + managerId.slice(1)}`);
-            if (hireButton) {
-                hireButton.addEventListener('click', () => {
-                    this.handleManagerHire(managerId);
+        // Create a mapping of manager IDs to their display names and costs
+        const managerConfig = {
+            'techManager1': { title: 'Junior Tech Manager', cost: 100, manages: 'tech1' },
+            'techManager2': { title: 'Tech Manager', cost: 1000, manages: 'tech2' },
+            'techManager3': { title: 'Senior Tech Manager', cost: 10000, manages: 'tech3' }
+        };
+
+        // Wait for DOM to be ready
+        const initializeManagers = () => {
+            Object.entries(managerConfig).forEach(([managerId, config]) => {
+                const button = document.getElementById(`hire${managerId}`);
+                if (!button) {
+                    // Instead of logging an error, try again later if button not found
+                    setTimeout(initializeManagers, 100);
+                    return;
+                }
+
+                // Remove any existing listeners
+                const newButton = button.cloneNode(true);
+                button.parentNode.replaceChild(newButton, button);
+
+                // Update button state if manager is owned
+                const manager = this.roles.manager.employees[managerId];
+                if (manager && manager.owned) {
+                    newButton.classList.add('owned');
+                    newButton.disabled = true;
+                    newButton.innerHTML = `
+                        <div class="manager-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="manager-info">
+                            <span class="title">${this.getManagerTitle(managerId)}</span>
+                            <div class="status">
+                                <i class="fas fa-check-circle"></i>
+                                Managing ${this.getTechnicianTitle(manager.manages)}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                newButton.addEventListener('click', () => {
+                    if (this.data >= manager.cost && !manager.owned) {
+                        this.handleManagerHire(managerId);
+                    }
                 });
-            }
-        });
+            });
+        };
+
+        // Start the initialization process
+        initializeManagers();
+    }
+
+    getManagerTitle(managerId) {
+        const titles = {
+            techManager1: 'Junior Tech Manager',
+            techManager2: 'Tech Manager',
+            techManager3: 'Senior Tech Manager'
+        };
+        return titles[managerId] || 'Manager';
     }
 
     restoreAutomatedTasks() {
@@ -1070,6 +1179,92 @@ class Game {
             automationStatus.innerHTML = '<i class="fas fa-cog fa-spin"></i> Automated';
             employeeInfo.appendChild(automationStatus);
         }
+    }
+
+    updateTechnicianButtons() {
+        Object.entries(this.roles.technician.employees).forEach(([techId, tech]) => {
+            const button = document.getElementById(`hire${techId.charAt(0).toUpperCase() + techId.slice(1)}`);
+            if (button) {
+                // Enable/disable based on cost
+                button.disabled = this.data < tech.cost || tech.owned;
+                
+                // Update button appearance based on affordability
+                if (this.data >= tech.cost && !tech.owned) {
+                    button.classList.add('affordable');
+                } else {
+                    button.classList.remove('affordable');
+                }
+            }
+        });
+    }
+
+    getTechnicianTitle(techId) {
+        const titles = {
+            tech1: 'Technician I',
+            tech2: 'Technician II',
+            tech3: 'Technician III'
+        };
+        return titles[techId] || 'Technician';
+    }
+
+    handleUpgradePurchase(upgradeId) {
+        const upgradeButton = document.getElementById(upgradeId);
+        if (!upgradeButton) return;
+
+        const costElement = upgradeButton.querySelector('.cost');
+        if (!costElement) return;
+
+        const cost = parseInt(costElement.textContent);
+        if (isNaN(cost) || this.data < cost) return;
+
+        this.data -= cost;
+        
+        // Apply the upgrade effect based on the ID
+        switch (upgradeId) {
+            case 'taskSpeedUpgrade':
+                this.achievementBonuses.taskSpeed += 0.1; // 10% faster tasks
+                break;
+            case 'revenueUpgrade':
+                this.achievementBonuses.income += 0.25; // 25% more income
+                break;
+            case 'automationUpgrade':
+                this.achievementBonuses.automation += 0.2; // 20% faster automation
+                break;
+            case 'efficiencyUpgrade':
+                this.achievementBonuses.efficiency += 0.25; // 25% double reward chance
+                break;
+        }
+
+        // Update the level display
+        const levelSpan = upgradeButton.querySelector(`#${upgradeId}Level`);
+        if (levelSpan) {
+            const currentLevel = parseInt(levelSpan.textContent) || 0;
+            levelSpan.textContent = currentLevel + 1;
+        }
+
+        // Update cost for next level
+        const newCost = Math.round(cost * 1.5);
+        costElement.textContent = `${newCost} GB`;
+
+        // Update game display
+        this.updateDisplay();
+        this.saveGame();
+    }
+
+    setupUpgradeHandlers() {
+        const upgradeButtons = [
+            'taskSpeedUpgrade',
+            'revenueUpgrade',
+            'automationUpgrade',
+            'efficiencyUpgrade'
+        ];
+
+        upgradeButtons.forEach(upgradeId => {
+            const button = document.getElementById(upgradeId);
+            if (button) {
+                button.addEventListener('click', () => this.handleUpgradePurchase(upgradeId));
+            }
+        });
     }
 }
 

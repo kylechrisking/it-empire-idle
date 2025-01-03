@@ -299,51 +299,55 @@ body::before {
 
 /* Employee card styles */
 .employee-card {
-    background: white;
-    border-radius: 10px;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+
+.employee-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .hire-button {
-    width: 100%;
-    padding: 15px;
+    background: linear-gradient(145deg, #f8f9fa, #e9ecef);
     border: none;
-    background: white;
-    cursor: pointer;
+    width: 100%;
+    padding: 20px;
+    transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
-    transition: all 0.3s;
+    gap: 8px;
 }
 
 .hire-button:not(:disabled):hover {
-    background: #f8f9fa;
-    transform: translateY(-2px);
+    background: linear-gradient(145deg, #e9ecef, #dee2e6);
+    cursor: pointer;
 }
 
-.hire-button:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
+.hire-button i {
+    font-size: 24px;
+    color: #3498db;
+    margin-bottom: 10px;
 }
 
 .hire-button .title {
-    font-size: 1.2em;
-    font-weight: 500;
+    font-size: 18px;
+    font-weight: 600;
     color: #2c3e50;
 }
 
 .hire-button .cost {
     color: #e74c3c;
+    font-weight: 500;
 }
 
 .hire-button .reward {
     color: #27ae60;
-}
-
-.hire-button .requirement {
-    color: #7f8c8d;
     font-size: 0.9em;
 }
 
@@ -375,46 +379,215 @@ body::before {
 
 /* Manager styles */
 .manager-grid {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.manager-section h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.manager-cards {
     display: grid;
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
 }
 
-.manager-section {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.5s ease;
-    display: none;
-}
-
-.manager-section.visible {
-    opacity: 1;
-    transform: translateY(0);
-    display: block;
+.manager-card {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 .manager-button {
     width: 100%;
-    padding: 15px;
+    padding: 20px;
     border: none;
-    background: white;
-    border-radius: 10px;
+    background: transparent;
     cursor: pointer;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 5px;
-    transition: all 0.3s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    gap: 15px;
+    transition: all 0.3s ease;
 }
 
 .manager-button:not(:disabled):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(145deg, #e9ecef, #dee2e6);
+}
+
+.manager-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.manager-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(145deg, #3498db, #2980b9);
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.manager-icon i {
+    font-size: 20px;
+    color: white;
+}
+
+.manager-info {
+    flex: 1;
+    text-align: left;
+}
+
+.manager-info .title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.manager-info .cost {
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+.manager-info .description {
+    color: #7f8c8d;
+    font-size: 0.9em;
 }
 
 .manager-button.owned {
-    background: #f1f8ff;
-    border: 1px solid #3498db;
+    background: linear-gradient(145deg, #27ae60, #2ecc71);
+    cursor: default;
+    padding: 1rem;
+}
+
+.manager-button.owned .manager-icon {
+    background: rgba(255, 255, 255, 0.9);
+    width: 40px;
+    height: 40px;
+}
+
+.manager-button.owned .manager-icon i {
+    color: #27ae60;
+    font-size: 18px;
+}
+
+.manager-button.owned .manager-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.manager-button.owned .manager-info .title {
+    color: white;
+    font-size: 1.1em;
+    margin-bottom: 0;
+}
+
+.manager-button.owned .manager-info .status {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9em;
+}
+
+.manager-button.owned .manager-details {
+    display: none;
+}
+
+/* Add a checkmark icon to show completion */
+.manager-button.owned::after {
+    content: '✓';
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Add hover effect for non-owned managers */
+.manager-button:not(.owned):hover {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1));
+}
+
+/* Disable hover effect for owned managers */
+.manager-button.owned:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Employee Card Styles */
+.employee-active {
+    padding: 1rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.employee-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.progress-container {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.progress-bar {
+    height: 30px;
+    background: linear-gradient(145deg, #f1f3f5, #e9ecef);
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar:hover {
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    width: 0%;
+    transition: width 0.3s linear;
+}
+
+.progress-bar.automated .progress-fill {
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+}
+
+.progress-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    color: #495057;
+    font-size: 0.9em;
+    line-height: 24px;
+    z-index: 1;
+}
+
+.automation-status {
+    margin-left: auto;
+}
+
+.automation-status i {
+    color: #4CAF50;
 }
 
 /* Settings styles */
@@ -1343,4 +1516,168 @@ main {
     font-size: 0.9em;
     opacity: 0.9;
     margin-top: 5px;
+}
+
+/* Panel Header Styles */
+.panel-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.panel-header h2 {
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.panel-header .panel-description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9em;
+}
+
+/* Manager Section Styles */
+.manager-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.manager-section h3 {
+    color: #3498db;
+    font-size: 1.2em;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(52, 152, 219, 0.3);
+}
+
+.manager-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 1rem;
+}
+
+.manager-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.manager-button {
+    width: 100%;
+    padding: 1.5rem;
+    border: none;
+    background: transparent;
+    color: #fff;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.manager-icon {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(145deg, #3498db, #2980b9);
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.manager-icon i {
+    font-size: 24px;
+    color: white;
+}
+
+.manager-info {
+    flex: 1;
+    text-align: left;
+}
+
+.manager-info .title {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.manager-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.manager-details .cost {
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+.manager-details .manages {
+    color: #3498db;
+}
+
+.manager-details .effect {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9em;
+}
+
+/* Owned state */
+.manager-button.owned {
+    background: linear-gradient(145deg, #27ae60, #2ecc71);
+    cursor: default;
+}
+
+.manager-button.owned .manager-icon {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.manager-button.owned .manager-icon i {
+    color: #27ae60;
+}
+
+.manager-button.owned .manager-info .title {
+    color: #fff;
+}
+
+.manager-button.owned .manager-details {
+    display: none;
+}
+
+.manager-button.owned::after {
+    content: '✓ Active - Managing Technician';
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9em;
+    margin-top: 0.5rem;
+}
+
+.hire-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: linear-gradient(145deg, #f1f1f1, #e0e0e0);
+}
+
+.hire-button.affordable {
+    background: linear-gradient(145deg, #3498db, #2980b9);
+    color: white;
+}
+
+.hire-button.affordable .title,
+.hire-button.affordable .cost,
+.hire-button.affordable .reward {
+    color: white;
+}
+
+.hire-button.affordable:hover {
+    background: linear-gradient(145deg, #2980b9, #2472a4);
+    transform: translateY(-2px);
 } 

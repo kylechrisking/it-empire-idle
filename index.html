@@ -86,15 +86,22 @@
                                         </div>
                                         <div class="employee-active" style="display: none;">
                                             <div class="employee-info">
-                                                <div class="employee-details">
-                                                    <span class="name">Technician</span>
-                                                    <span class="rate">15 GB/task</span>
+                                                <div class="employee-header">
+                                                    <i class="fas fa-user-tie"></i>
+                                                    <div class="employee-details">
+                                                        <span class="name">Technician I</span>
+                                                        <span class="rate">15 GB/task</span>
+                                                    </div>
+                                                    <div class="automation-status">
+                                                        <i class="fas fa-robot" style="display: none;"></i>
+                                                    </div>
                                                 </div>
-                                                <!-- Automation status will be added here dynamically -->
                                             </div>
-                                            <div class="progress-bar" data-employee="tech1">
-                                                <div class="progress-fill"></div>
-                                                <div class="progress-text">Click to start task</div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" data-employee="tech1">
+                                                    <div class="progress-fill"></div>
+                                                    <div class="progress-text">Click to start task</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -421,14 +428,61 @@
                 </div>
 
                 <div id="managersPanel" class="panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-user-tie"></i> Managers</h2>
+                        <p class="panel-description">Hire managers to automate your employees' tasks</p>
+                    </div>
                     <div class="manager-grid">
-                        <div class="manager-card" id="techManager1Card">
-                            <button id="hireTechManager1" class="manager-button">
-                                <i class="fas fa-user-tie"></i>
-                                <span class="title">Junior Manager</span>
-                                <span class="cost">Cost: 100 GB</span>
-                                <span class="description">Automates one Technician</span>
-                            </button>
+                        <!-- Tech Managers -->
+                        <div class="manager-section">
+                            <h3>Technical Support Managers</h3>
+                            <div class="manager-cards">
+                                <div class="manager-card">
+                                    <button id="hireTechManager1" class="manager-button">
+                                        <div class="manager-icon">
+                                            <i class="fas fa-user-tie"></i>
+                                        </div>
+                                        <div class="manager-info">
+                                            <span class="title">Junior Tech Manager</span>
+                                            <div class="manager-details">
+                                                <span class="cost">Cost: 100 GB</span>
+                                                <span class="manages">Automates: Technician I</span>
+                                                <span class="effect">Effect: Continuously performs Technician I tasks</span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="manager-card" id="techManager2Card">
+                                    <button id="hireTechManager2" class="manager-button">
+                                        <div class="manager-icon">
+                                            <i class="fas fa-user-tie"></i>
+                                        </div>
+                                        <div class="manager-info">
+                                            <span class="title">Tech Manager</span>
+                                            <div class="manager-details">
+                                                <span class="cost">Cost: 1,000 GB</span>
+                                                <span class="manages">Automates: Technician II</span>
+                                                <span class="effect">Effect: Continuously performs Technician II tasks</span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="manager-card" id="techManager3Card">
+                                    <button id="hireTechManager3" class="manager-button">
+                                        <div class="manager-icon">
+                                            <i class="fas fa-user-tie"></i>
+                                        </div>
+                                        <div class="manager-info">
+                                            <span class="title">Senior Tech Manager</span>
+                                            <div class="manager-details">
+                                                <span class="cost">Cost: 10,000 GB</span>
+                                                <span class="manages">Automates: Technician III</span>
+                                                <span class="effect">Effect: Continuously performs Technician III tasks</span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
